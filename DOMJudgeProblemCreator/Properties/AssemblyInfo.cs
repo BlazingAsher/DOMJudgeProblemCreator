@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DOMJudgeProblemCreator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("DOMJudge Problem Creator")]
+[assembly: AssemblyDescription("An easy-to-use utility to package contests problems into the Kattis Problem Package Format")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DOMJudgeProblemCreator")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("David Hui")]
+[assembly: AssemblyProduct("DOMJudge Problem Creator")]
+[assembly: AssemblyCopyright("Copyright © 2018 David Hui")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
