@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -20,6 +21,11 @@ namespace DOMJudgeProblemCreator
         {
             InitializeComponent();
         }
+
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
 
         private Problem problem;
         private string FormTitle = "DOMJudge Problem Creator";
@@ -42,7 +48,7 @@ namespace DOMJudgeProblemCreator
             }
             catch
             {
-               
+                Console.WriteLine("No internet connection. Skipping update check.");
             }
             
         }
@@ -59,6 +65,7 @@ namespace DOMJudgeProblemCreator
             groupBox3.Enabled = true;
             btnSave.Enabled = true;
             btnExport.Enabled = true;
+            listBox1.Enabled = true;
         }
 
         private void newProblem()
@@ -79,6 +86,7 @@ namespace DOMJudgeProblemCreator
 
             richTextBox1.Text = "Sample Input";
             richTextBox2.Text = "Sample Output";
+            
             checkSample.Checked = false;
 
             this.Text = FormTitle;
@@ -87,12 +95,44 @@ namespace DOMJudgeProblemCreator
             
         }
 
-        private void updateProblemObject()
+        private bool updateProblemObject()
         {
-            problem.Name = name.Text;
-            problem.ShortName = nickName.Text;
-            problem.MaxMemory = Convert.ToInt64(memLimit.Text);
-            problem.MaxTime = Convert.ToDouble(timeLimit.Text);
+            try
+            {
+                problem.Name = name.Text;
+                problem.ShortName = nickName.Text;
+                problem.MaxMemory = Math.Abs(Convert.ToInt64(memLimit.Text));
+                problem.MaxTime = Math.Abs(Convert.ToDouble(timeLimit.Text));
+
+                // Check if any values are weird
+                if (problem.ProblemStatementPath == null && MessageBox.Show("You have no problem statement! Continue?", FormTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                {
+                    return false;
+                }
+
+                if (problem.TestCases.Count < 1 && MessageBox.Show("You have no test cases! Continue?", FormTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                {
+                    return false;
+                }
+
+                if (problem.MaxMemory > 512 && MessageBox.Show("Your maximum memory is unusally high. Did you input the correct value?", FormTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    return false;
+                }
+
+                if (problem.MaxTime > 10 && MessageBox.Show("Your maximum time is unusally high. Did you input the correct value?", FormTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("Invalid data. Please check your fields and try again.", FormTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            
         }
 
         private void importProblem()
@@ -164,7 +204,12 @@ namespace DOMJudgeProblemCreator
             // Export a problem to a file
 
             // Update the problem object
-            updateProblemObject();
+            bool updatedObject = updateProblemObject();
+
+            if (!updatedObject)
+            {
+                return;
+            }
 
             // Show the save file dialog
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -205,32 +250,68 @@ namespace DOMJudgeProblemCreator
                 updateProblemObject();
 
                 // Setup a temporary directory / clear an old one
-                if (Directory.Exists("temp"))
+                try
                 {
-                    Directory.Delete("temp", true);
+                    if (Directory.Exists("temp"))
+                    {
+                        Directory.Delete("temp", true);
+                    }
+                    Directory.CreateDirectory("temp");
+                    Directory.CreateDirectory("temp/problem_statement");
+                    Directory.CreateDirectory("temp/data");
                 }
-                Directory.CreateDirectory("temp");
-                Directory.CreateDirectory("temp/problem_statement");
-                Directory.CreateDirectory("temp/data");
-                Directory.CreateDirectory("temp/data/secret");
+                catch
+                {
+                    MessageBox.Show("Unable to setup a working directory.", FormTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 // Check to see if need to create a sample data dir
                 bool hasSample = false;
+                bool hasSecret = false;
                 foreach (string[] testCase in problem.TestCases)
                 {
                     if (testCase[2] == "True")
                     {
                         hasSample = true;
-                        break;
+                        if (hasSecret)
+                        {
+                            break;
+                        }
+                    }
+                    else if (testCase[2] == "False")
+                    {
+                        hasSecret = true;
+                        if (hasSample)
+                        {
+                            break;
+                        }
                     }
                 }
+
                 if (hasSample)
                 {
                     Directory.CreateDirectory("temp/data/sample");
                 }
 
+                if (hasSecret)
+                {
+                    Directory.CreateDirectory("temp/data/secret");
+                }
+
                 // Copy the problem statement
-                File.Copy(problem.ProblemStatementPath, "temp/problem_statement/problem.pdf");
+                if (problem.ProblemStatementPath != null)
+                {
+                    try
+                    {
+                        File.Copy(problem.ProblemStatementPath, "temp/problem_statement/problem.pdf");
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Unable to copy the problem statement into the working direcotry.", FormTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
 
                 // Generate the problem yaml
                 using (StreamWriter writetext = new StreamWriter("temp/problem.yaml"))
@@ -262,14 +343,31 @@ namespace DOMJudgeProblemCreator
                     {
                         path += "secret/";
                     }
-                    File.WriteAllLines(path + (i+1) + ".in", new string[] { testCase[0] });
-                    File.WriteAllLines(path + (i+1) + ".ans", new string[] { testCase[1] });
+                    try
+                    {
+                        File.WriteAllLines(path + (i + 1) + ".in", new string[] { testCase[0] });
+                        File.WriteAllLines(path + (i + 1) + ".ans", new string[] { testCase[1] });
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Unable to copy the test case into the working directory.", FormTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
                     i++;
                 }
 
                 // Generate the zip
-                ZipFile.CreateFromDirectory("temp", saveFileDialog1.FileName);
+                try
+                {
+                    ZipFile.CreateFromDirectory("temp", saveFileDialog1.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to generate a zip file. Please do it manually.", FormTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
             }
 
             
@@ -354,14 +452,18 @@ namespace DOMJudgeProblemCreator
             
         }
 
-        private void btnUpdateTestCase_Click(object sender, EventArgs e)
+        private void btnDeleteTestCase_Click(object sender, EventArgs e)
         {
-            
-            if(richTextBox1.Text == "DELTHISCASE" && listBox1.SelectedIndex != -1)
+            if(listBox1.SelectedIndex != -1 && MessageBox.Show("Are you sure you want to delete this test case?",FormTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
             {
                 deleteTestCase(listBox1.SelectedIndex);
             }
-            else if (listBox1.SelectedIndex != -1)
+        }
+
+        private void btnUpdateTestCase_Click(object sender, EventArgs e)
+        {
+            
+            if (listBox1.SelectedIndex != -1)
             {
                 updateTestCase(listBox1.SelectedIndex);
             }
@@ -372,6 +474,7 @@ namespace DOMJudgeProblemCreator
             if(listBox1.SelectedIndex != -1)
             {
                 btnUpdateTestCase.Enabled = true;
+                btnDeleteTestCase.Enabled = true;
                 string[] testCaseTemp = problem.TestCases[listBox1.SelectedIndex];
                 richTextBox1.Text = testCaseTemp[0];
                 richTextBox2.Text = testCaseTemp[1];
@@ -380,6 +483,7 @@ namespace DOMJudgeProblemCreator
             else
             {
                 btnUpdateTestCase.Enabled = false;
+                btnDeleteTestCase.Enabled = false;
             }
             
         }
@@ -421,5 +525,6 @@ namespace DOMJudgeProblemCreator
             AboutBox1 aboutBox1 = new AboutBox1();
             aboutBox1.Show();
         }
+
     }
 }

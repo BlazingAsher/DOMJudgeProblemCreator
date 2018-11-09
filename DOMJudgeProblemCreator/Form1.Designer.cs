@@ -62,6 +62,7 @@
             this.btnImport = new System.Windows.Forms.Button();
             this.openJudgeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDeleteTestCase = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -276,6 +277,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.btnDeleteTestCase);
             this.groupBox3.Controls.Add(this.checkSample);
             this.groupBox3.Controls.Add(this.btnUpdateTestCase);
             this.groupBox3.Controls.Add(this.btnNewTestCase);
@@ -313,11 +315,11 @@
             // 
             // btnNewTestCase
             // 
-            this.btnNewTestCase.Location = new System.Drawing.Point(233, 274);
+            this.btnNewTestCase.Location = new System.Drawing.Point(254, 274);
             this.btnNewTestCase.Name = "btnNewTestCase";
-            this.btnNewTestCase.Size = new System.Drawing.Size(75, 23);
+            this.btnNewTestCase.Size = new System.Drawing.Size(24, 23);
             this.btnNewTestCase.TabIndex = 5;
-            this.btnNewTestCase.Text = "New";
+            this.btnNewTestCase.Text = "+";
             this.btnNewTestCase.UseVisualStyleBackColor = true;
             this.btnNewTestCase.Click += new System.EventHandler(this.btnNewTestCase_Click);
             // 
@@ -342,6 +344,7 @@
             // 
             // listBox1
             // 
+            this.listBox1.Enabled = false;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(8, 26);
             this.listBox1.Name = "listBox1";
@@ -394,6 +397,17 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // btnDeleteTestCase
+            // 
+            this.btnDeleteTestCase.Enabled = false;
+            this.btnDeleteTestCase.Location = new System.Drawing.Point(284, 274);
+            this.btnDeleteTestCase.Name = "btnDeleteTestCase";
+            this.btnDeleteTestCase.Size = new System.Drawing.Size(24, 23);
+            this.btnDeleteTestCase.TabIndex = 6;
+            this.btnDeleteTestCase.Text = "-";
+            this.btnDeleteTestCase.UseVisualStyleBackColor = true;
+            this.btnDeleteTestCase.Click += new System.EventHandler(this.btnDeleteTestCase_Click);
             // 
             // Form1
             // 
@@ -461,6 +475,7 @@
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.ToolStripMenuItem openJudgeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button btnDeleteTestCase;
     }
 }
 
