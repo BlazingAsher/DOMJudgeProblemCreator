@@ -100,6 +100,11 @@ namespace DOMJudgeProblemCreator
             try
             {
                 problem.Name = name.Text;
+                if(nickName.Text.Split(' ').Length > 1)
+                {
+                    MessageBox.Show("The short name cannot contain any spaces!", FormTitle, MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    return false;
+                }
                 problem.ShortName = nickName.Text;
                 problem.MaxMemory = Math.Abs(Convert.ToInt64(memLimit.Text));
                 problem.MaxTime = Math.Abs(Convert.ToDouble(timeLimit.Text));
@@ -526,5 +531,9 @@ namespace DOMJudgeProblemCreator
             aboutBox1.Show();
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Properties.Settings.Default.terminate = true;
+        }
     }
 }

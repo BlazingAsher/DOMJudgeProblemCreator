@@ -35,6 +35,8 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newProblemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openJudgeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnChooseProblemStatement = new System.Windows.Forms.Button();
             this.problemStatement = new System.Windows.Forms.Label();
@@ -51,6 +53,7 @@
             this.infoMemLimit = new System.Windows.Forms.Label();
             this.infoName = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnDeleteTestCase = new System.Windows.Forms.Button();
             this.checkSample = new System.Windows.Forms.CheckBox();
             this.btnUpdateTestCase = new System.Windows.Forms.Button();
             this.btnNewTestCase = new System.Windows.Forms.Button();
@@ -60,9 +63,6 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
-            this.openJudgeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnDeleteTestCase = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -122,9 +122,23 @@
             // newProblemToolStripMenuItem
             // 
             this.newProblemToolStripMenuItem.Name = "newProblemToolStripMenuItem";
-            this.newProblemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newProblemToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.newProblemToolStripMenuItem.Text = "New";
             this.newProblemToolStripMenuItem.Click += new System.EventHandler(this.newProblemToolStripMenuItem_Click);
+            // 
+            // openJudgeToolStripMenuItem
+            // 
+            this.openJudgeToolStripMenuItem.Name = "openJudgeToolStripMenuItem";
+            this.openJudgeToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.openJudgeToolStripMenuItem.Text = "Open Judge";
+            this.openJudgeToolStripMenuItem.Click += new System.EventHandler(this.openJudgeToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // groupBox2
             // 
@@ -292,6 +306,17 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Test Cases";
             // 
+            // btnDeleteTestCase
+            // 
+            this.btnDeleteTestCase.Enabled = false;
+            this.btnDeleteTestCase.Location = new System.Drawing.Point(284, 274);
+            this.btnDeleteTestCase.Name = "btnDeleteTestCase";
+            this.btnDeleteTestCase.Size = new System.Drawing.Size(24, 23);
+            this.btnDeleteTestCase.TabIndex = 6;
+            this.btnDeleteTestCase.Text = "-";
+            this.btnDeleteTestCase.UseVisualStyleBackColor = true;
+            this.btnDeleteTestCase.Click += new System.EventHandler(this.btnDeleteTestCase_Click);
+            // 
             // checkSample
             // 
             this.checkSample.AutoSize = true;
@@ -384,31 +409,6 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
-            // openJudgeToolStripMenuItem
-            // 
-            this.openJudgeToolStripMenuItem.Name = "openJudgeToolStripMenuItem";
-            this.openJudgeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openJudgeToolStripMenuItem.Text = "Open Judge";
-            this.openJudgeToolStripMenuItem.Click += new System.EventHandler(this.openJudgeToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // btnDeleteTestCase
-            // 
-            this.btnDeleteTestCase.Enabled = false;
-            this.btnDeleteTestCase.Location = new System.Drawing.Point(284, 274);
-            this.btnDeleteTestCase.Name = "btnDeleteTestCase";
-            this.btnDeleteTestCase.Size = new System.Drawing.Size(24, 23);
-            this.btnDeleteTestCase.TabIndex = 6;
-            this.btnDeleteTestCase.Text = "-";
-            this.btnDeleteTestCase.UseVisualStyleBackColor = true;
-            this.btnDeleteTestCase.Click += new System.EventHandler(this.btnDeleteTestCase_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -426,6 +426,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "DOMJudge Problem Creator";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
