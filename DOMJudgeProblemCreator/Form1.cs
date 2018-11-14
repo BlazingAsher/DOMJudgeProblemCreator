@@ -171,8 +171,7 @@ namespace DOMJudgeProblemCreator
                         timeLimit.Text = problem.MaxTime.ToString();
                         hexColour.Text = problem.HexColour;
 
-                        //Color temp = Color.FromArgb(0xFF00FF);
-                        Color temp = Color.FromArgb(Convert.ToInt32(problem.HexColour.Substring(1)));
+                        Color temp = ColorTranslator.FromHtml(problem.HexColour);
                         hexColour.BackColor = Color.FromArgb(temp.R, temp.G, temp.B);
 
                         string problemFileName = problem.ProblemStatementPath;
@@ -193,6 +192,7 @@ namespace DOMJudgeProblemCreator
                         string[] titleTextTemp = this.Text.Split(Convert.ToChar("-"));
                         this.Text = FormTitle + " - " + openFileDialog1.FileName;
                         //Console.WriteLine(fileName);
+                        
                     }
                     catch
                     {
